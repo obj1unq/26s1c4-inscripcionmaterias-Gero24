@@ -1,0 +1,137 @@
+import carreras.*
+
+describe "Universidad" {
+  const programacion = new Carrera()
+  const medicina = new Carrera()
+  const derecho = new Carrera()
+  const elementosDeProgramacion = new Materia(carrera = programacion)
+  const matematica1 = new Materia(carrera = programacion)
+  const objetos1 = new Materia(carrera = programacion)
+  const objetos2 = new Materia(carrera = programacion)
+  const objetos3 = new Materia(carrera = programacion)
+  const trabajoFinal = new Materia(carrera = programacion)
+  const baseDeDatos = new Materia(carrera = programacion)
+  const quimica = new Materia(carrera = medicina)
+  const biologia1 = new Materia(carrera = medicina)
+  const biologia2 = new Materia(carrera = medicina)
+  const anatomiaGeneral = new Materia(carrera = medicina)
+  
+  test "Programación incluye, entre otras, estas materias: Elementos de Programación, Matemática 1, Objetos 1, Objetos 2, Objetos 3, Trabajo Final, Bases de Datos." {
+    programacion.agregarMateria(elementosDeProgramacion)
+    programacion.agregarMateria(matematica1)
+    programacion.agregarMateria(objetos1)
+    programacion.agregarMateria(objetos2)
+    programacion.agregarMateria(objetos3)
+    programacion.agregarMateria(trabajoFinal)
+    programacion.agregarMateria(baseDeDatos)
+    
+    assert.equals(
+      [
+        elementosDeProgramacion,
+        matematica1,
+        objetos1,
+        objetos2,
+        objetos3,
+        trabajoFinal,
+        baseDeDatos
+      ],
+      programacion.materiasDeLaCarrera()
+    )
+  }
+  
+  test "Roque es un estudiante muy inquieto, que está cursando programación y medicina. De programación, tiene aprobadas Matemática 1 y Objetos 1." {
+    const roque = new Estudiante()
+    const matematica1ConNota8 = new MateriaAprobada(
+      materia = matematica1,
+      nota = 8
+    )
+    const objetos1ConNota9 = new MateriaAprobada(materia = objetos1, nota = 9)
+    roque.inscribirCarrera(programacion)
+    roque.inscribirCarrera(medicina)
+    
+    roque.agregarMateriaAprobada(matematica1ConNota8)
+    roque.agregarMateriaAprobada(objetos1ConNota9)
+    
+    assert.equals([programacion, medicina], roque.carrerasQueEstaInscripto())
+    assert.that(roque.aproboMateria(matematica1))
+    assert.that(roque.aproboMateria(objetos1))
+  }
+  
+  test "Registrar una materia aprobada por un estudiante indicando la nota obtenida." {
+    const roque = new Estudiante()
+    roque.inscribirCarrera(programacion)
+    const matematica1ConNota8 = new MateriaAprobada(
+      materia = matematica1,
+      nota = 8
+    )
+    roque.agregarMateriaAprobada(matematica1ConNota8)
+    
+    assert.that(roque.aproboMateria(matematica1))
+    assert.equals(8, matematica1ConNota8.nota())
+  }
+  
+  test "Si el estudiante ya tiene registrada la aprobación de la materia, se debe lanzar un error." {
+    const roque = new Estudiante()
+    roque.inscribirCarrera(programacion)
+    const matematica1ConNota8 = new MateriaAprobada(
+      materia = matematica1,
+      nota = 8
+    )
+    roque.agregarMateriaAprobada(matematica1ConNota8)
+    
+    
+    assert.throwsExceptionWithMessage(
+      "La materia ya fue aprobada",
+      { roque.agregarMateriaAprobada(matematica1ConNota8) }
+    )
+  }
+  
+  test "Saber la cantidad de materias aprobadas" {
+    const roque = new Estudiante()
+    const matematica1ConNota8 = new MateriaAprobada(
+      materia = matematica1,
+      nota = 8
+    )
+    const objetos1ConNota9 = new MateriaAprobada(materia = objetos1, nota = 9)
+    
+    roque.agregarMateriaAprobada(matematica1ConNota8)
+    roque.agregarMateriaAprobada(objetos1ConNota9)
+    
+    assert.equals(2, roque.cantidadDeMateriasAprobadas())
+  }
+  
+  test "Saber el promedio" {
+    const roque = new Estudiante()
+
+    const matematica1ConNota8 = new MateriaAprobada(
+      materia = matematica1,
+      nota = 8
+    )
+    const objetos1ConNota9 = new MateriaAprobada(materia = objetos1, nota = 9)
+    
+    roque.agregarMateriaAprobada(matematica1ConNota8)
+    roque.agregarMateriaAprobada(objetos1ConNota9)
+    
+    assert.equals(8.5, roque.promedio())
+  }
+
+  test "Saber para un estudiante: la colección de materias de todas las carreras a las que está inscripto. P.ej. para Roque debe incluir todas las de programación y también todas las de medicina." {
+    programacion.agregarMateria(elementosDeProgramacion)
+    programacion.agregarMateria(matematica1)
+    programacion.agregarMateria(objetos1)
+    programacion.agregarMateria(objetos2)
+    programacion.agregarMateria(objetos3)
+    programacion.agregarMateria(trabajoFinal)
+    programacion.agregarMateria(baseDeDatos)
+    medicina.agregarMateria(quimica)
+    medicina.agregarMateria(biologia1)
+    medicina.agregarMateria(biologia2)
+    medicina.agregarMateria(anatomiaGeneral)
+    const roque = new Estudiante()
+    roque.inscribirCarrera(programacion)
+    roque.inscribirCarrera(medicina)
+
+
+    assert.equals([elementosDeProgramacion, matematica1, objetos1, objetos2, objetos3, trabajoFinal, baseDeDatos, quimica, biologia1, biologia2, anatomiaGeneral], roque.materiasDeCarrerasInscriptas())
+  }
+}
