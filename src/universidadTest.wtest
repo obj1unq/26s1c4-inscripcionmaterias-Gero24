@@ -134,4 +134,25 @@ describe "Universidad" {
 
     assert.equals([elementosDeProgramacion, matematica1, objetos1, objetos2, objetos3, trabajoFinal, baseDeDatos, quimica, biologia1, biologia2, anatomiaGeneral], roque.materiasDeCarrerasInscriptas())
   }
+
+  test "La materia debe corresponder a alguna de las carreras que esté cursando el estudiante" {
+    
+    const roque = new Estudiante()
+    roque.inscribirCarrera(programacion)
+    roque.inscribirCarrera(derecho)
+    programacion.agregarMateria(objetos1)
+    programacion.agregarMateria(objetos2)
+    programacion.agregarMateria(objetos3)
+  
+    assert.that(roque.cursaLaCarreraDe(objetos1))
+  }
+
+  test "El estudiante no puede haber aprobado la materia previamente" {
+
+    const roque = new Estudiante()
+    roque.inscribirCarrera(programacion)
+    programacion.agregarMateria(objetos1)
+
+    assert.that(roque.noAprobo(objetos1))
+  }
 }

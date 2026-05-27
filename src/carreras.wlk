@@ -19,7 +19,9 @@ class Estudiante {
   
   method cantidadDeMateriasAprobadas() = materiasAprobadas.size()
   
-  method materiasQueYaAprobo() = materiasAprobadas.map({aprobada => aprobada.materia()})
+  method materiasQueYaAprobo() = materiasAprobadas.map(
+    { aprobada => aprobada.materia() }
+  )
   
   method promedio() {
     if (self.cantidadDeMateriasAprobadas() == 0) {
@@ -32,17 +34,22 @@ class Estudiante {
   method materiasDeCarrerasInscriptas() = carreras.map(
     { carrera => carrera.materiasDeLaCarrera() }
   ).flatten()
-
-  method puedeInscribirseA(materia) = self.cursaLaCarreraDe(materia) &&
-    self.noAprobo(materia) &&
-    materia.cumpleRequisitosPara(self)
-
-  method cursaLaCarreraDe(materia) = self.carrerasQueEstaInscripto().contains(materia.carreraALaQuePertenece())
-
+  
+  method puedeInscribirseA(materia) = self.cursaLaCarreraDe(materia) && self.noAprobo(materia) && self.noEstaInscriptoEn(materia) && materia.cumpleRequisitosPara(self)
+  
+  
+  method cursaLaCarreraDe(materia) = self.carrerasQueEstaInscripto().contains(
+    materia.carreraALaQuePertenece()
+  )
+  
   method noAprobo(materia) = !self.aproboMateria(materia)
+
+  method noEstaInscriptoEn(materia) = !self.estaInscriptoEn(materia)
+
+  method estaInscriptoEn(materia) = materia.tieneInscriptoAl(self)
+
+
 }
-
-
 
 class Carrera {
   const materias = []
@@ -57,12 +64,38 @@ class Carrera {
 class Materia {
   const carrera
   const requisito = sinRequisito
+  const inscriptos = []
+  const listaDeEspera = []
+  var cupo
   
   method carreraALaQuePertenece() = carrera
+  
+  method cumpleRequisitosPara(estudiante) = requisito.cumplePara(estudiante)
+  
+  method estudiantesInscriptos() = inscriptos
 
-  method cumpleRequisitosPara(estudiante) {
-    requisito.cumplePara(estudiante)
+  method estudiantesEnListaDeEspera() = listaDeEspera
+
+  method tieneInscriptoAl(estudiante) = inscriptos.contains(estudiante)
+
+  method inscribirEstudiante(estudiante) {
+  if (!estudiante.puedeInscribirseA(self)) {
+    throw new Exception(message = "No cumple con los requisitos de la materia")
   }
+
+  if (self.hayCupo()) {
+    inscriptos.add(estudiante)
+  } else {
+    listaDeEspera.add(estudiante)
+  }
+}
+
+  method cupos() = cupo
+  method cupos(cantidad) {
+    cupo = cantidad
+  }
+
+  method hayCupo() = cupo > inscriptos.size()  
 }
 
 class MateriaAprobada {
@@ -80,9 +113,8 @@ object sinRequisito {
 
 class RequisitoPorCorrelativas {
   const correlativas = []
-
-  method cumplePara(estudiante) =
-    correlativas.all({ materia => estudiante.aproboMateria(materia) })
+  
+  method cumplePara(estudiante) = correlativas.all(
+    { materia => estudiante.aproboMateria(materia) }
+  )
 }
-
-
