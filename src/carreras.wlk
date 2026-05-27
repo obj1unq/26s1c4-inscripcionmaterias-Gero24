@@ -91,11 +91,29 @@ class Materia {
 }
 
   method cupos() = cupo
+
   method cupos(cantidad) {
     cupo = cantidad
   }
 
   method hayCupo() = cupo > inscriptos.size()  
+
+  method darDeBajaInscripto(estudiante) {
+  if (self.tieneInscriptoAl(estudiante)) {
+    inscriptos.remove(estudiante)
+    self.ocuparCupoConPrimeroEnEspera()
+  }
+}
+  
+  method ocuparCupoConPrimeroEnEspera() {
+  if (!listaDeEspera.isEmpty()) {
+    const primerEstudiante = listaDeEspera.first()
+    listaDeEspera.remove(primerEstudiante)
+    inscriptos.add(primerEstudiante)
+  }
+}
+    
+  
 }
 
 class MateriaAprobada {
