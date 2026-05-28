@@ -1,5 +1,6 @@
-import carreras.*
-
+import carrera.*
+import materia.*
+import estudiante.*
 describe "Universidad" {
   const programacion = new Carrera()
   const medicina = new Carrera()
@@ -7,7 +8,7 @@ describe "Universidad" {
   const elementosDeProgramacion = new Materia(carrera = programacion)
   const matematica1 = new Materia(carrera = programacion)
   const objetos1 = new Materia(carrera = programacion)
-  const objetos2 = new Materia(carrera = programacion)
+  const objetos2 = new Materia(carrera = programacion, requisito = new RequisitoPorCorrelativas(correlativas = [objetos1, matematica1]))
   const objetos3 = new Materia(carrera = programacion)
   const trabajoFinal = new Materia(carrera = programacion)
   const baseDeDatos = new Materia(carrera = programacion)
@@ -155,4 +156,20 @@ describe "Universidad" {
 
     assert.that(roque.noAprobo(objetos1))
   }
+
+  test "los requisitos de Objetos 2 son Objetos 1 y Matemática 1." {
+
+    const roque = new Estudiante()
+    roque.inscribirCarrera(programacion)
+    programacion.agregarMateria(objetos1)
+    programacion.agregarMateria(objetos2)
+    programacion.agregarMateria(matematica1)
+    const matematica1ConNota8 = new MateriaAprobada(materia = matematica1,nota = 8)
+    const objetos1ConNota9 = new MateriaAprobada(materia = objetos1, nota = 9)
+    roque.agregarMateriaAprobada(matematica1ConNota8)
+    roque.agregarMateriaAprobada(objetos1ConNota9)
+
+    assert.that(roque.puedeInscribirseA(objetos2))
+  }
 }
+
